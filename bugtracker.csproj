@@ -1,0 +1,60 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <UserSecretsId>18864265-9930-4e63-a43d-918325577982</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="obj\Debug\**" />
+    <Compile Remove="obj\Release\**" />
+    <Content Remove="obj\Debug\**" />
+    <Content Remove="obj\Release\**" />
+    <EmbeddedResource Remove="obj\Debug\**" />
+    <EmbeddedResource Remove="obj\Release\**" />
+    <None Remove="obj\Debug\**" />
+    <None Remove="obj\Release\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include=".vscode\launch.json" />
+    <Content Include=".vscode\tasks.json" />
+    <Content Include="bin\Debug\net5.0\appsettings.Development.json" />
+    <Content Include="bin\Debug\net5.0\appsettings.json" />
+    <Content Include="bin\Debug\net5.0\bugtracker.deps.json" />
+    <Content Include="bin\Debug\net5.0\bugtracker.runtimeconfig.dev.json" />
+    <Content Include="bin\Debug\net5.0\bugtracker.runtimeconfig.json" />
+    <Content Include="obj\bugtracker.csproj.nuget.dgspec.json" />
+    <Content Include="obj\project.assets.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AspNetCore.HealthChecks.MongoDb" Version="6.0.2" />
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.16" />
+    <PackageReference Include="MongoDB.Driver" Version="2.14.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.17.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="bin\Debug\net5.0\bugtracker.dll" />
+    <None Include="bin\Debug\net5.0\bugtracker.exe" />
+    <None Include="bin\Debug\net5.0\bugtracker.pdb" />
+    <None Include="bin\Debug\net5.0\Microsoft.OpenApi.dll" />
+    <None Include="bin\Debug\net5.0\ref\bugtracker.dll" />
+    <None Include="bin\Debug\net5.0\Swashbuckle.AspNetCore.Swagger.dll" />
+    <None Include="bin\Debug\net5.0\Swashbuckle.AspNetCore.SwaggerGen.dll" />
+    <None Include="bin\Debug\net5.0\Swashbuckle.AspNetCore.SwaggerUI.dll" />
+    <None Include="obj\bugtracker.csproj.nuget.g.props" />
+    <None Include="obj\bugtracker.csproj.nuget.g.targets" />
+    <None Include="obj\project.nuget.cache" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="bin\Release\net5.0\ref\" />
+    <Folder Include="static\user\d902f1e9-0554-46a8-8617-24bd11beeba5\images\" />
+  </ItemGroup>
+
+</Project>

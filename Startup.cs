@@ -45,7 +45,7 @@ namespace bugtracker {
 
       //Adding a new instance of the MongoClient with the connection string.
       services.AddSingleton<IMongoClient>(servicesProvider => {
-        var settings = MongoClientSettings.FromConnectionString(mongoDbSettings.ConnectionString);//"mongodb +srv://admin:mongoadmin0070@bugtrackercluster.nzt2z.mongodb.net/bugtracker?retryWrites=true&w=majority"
+        var settings = MongoClientSettings.FromConnectionString(mongoDbSettings.ConnectionString);
         settings.ServerApi = new ServerApi(ServerApiVersion.V1);
         return new MongoClient(settings);
       });

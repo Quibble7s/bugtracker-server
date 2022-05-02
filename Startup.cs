@@ -115,10 +115,12 @@ namespace bugtracker {
       });
 
       //STATIC FILES
-      app.UseStaticFiles(new StaticFileOptions() {
-        FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "static")),
-        RequestPath = "/static"
-      }) ;
+      //Disabled in production since heroku doesn't support container volumes
+      if(env.IsDevelopment())
+        app.UseStaticFiles(new StaticFileOptions() {
+          FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "static")),
+          RequestPath = "/static"
+        }) ;
 
       app.UseAuthentication();
       app.UseAuthorization();

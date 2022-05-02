@@ -85,6 +85,12 @@ namespace bugtracker.Controllers {
 		//PUT /api/v1/user/{id}
 		[HttpPut("image")]
 		public async Task<IActionResult> UpdateUserProfilePictureAsync([FromForm][Required] IFormFile data) {
+			//Disabled
+			return BadRequest(new {
+				Message = $"Disabled since heroku doesn't support container volumes.",
+				Status = 400
+			});
+
 			Guid id = new Guid(GetUserId());
 
 			string[] validExtensions = new string[] {"jpg", "png", "svg", "gif"};

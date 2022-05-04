@@ -28,7 +28,10 @@ namespace bugtracker.Controllers {
 		public async Task<ActionResult<object>> LoginAsync(LoginDTO login) {
 			var auth = await authRepo.LoginAsync(login.Email, login.Password);
 			if (auth == null)
-				return Unauthorized();
+				return Unauthorized(new{
+					Message = "Invalid email or password.", 
+					Status = 401 
+				});
 			return Ok(auth);
 		}
 

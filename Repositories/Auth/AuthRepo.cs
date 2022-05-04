@@ -31,9 +31,9 @@ namespace bugtracker.Repositories {
 
 		public async Task<object> LoginAsync(string email, string password) {
 			User user = await userCollection.Find(u => u.Email.ToLower() == email.ToLower()).SingleOrDefaultAsync();
-			bool verified = BCryptNet.Verify(password, user.Password);
+			bool verified = BCryptNet.Verify(password, user?.Password);
 
-			if (user == null && !verified)
+			if (user == null || !verified)
 				return null;
 
 			var tokenHandler = new JwtSecurityTokenHandler();

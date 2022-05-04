@@ -41,6 +41,20 @@ namespace bugtracker.Controllers {
 			return Ok((await userRepo.GetUsersAsync()).Select(user => user.AsDTO()));
 		}
 
+		//GET /api/v1/user/me
+		[HttpGet("me")]
+		public async Task<ActionResult<UserDTO>> GetUserAsync() {
+			string id = GetUserId();
+			User user = await userRepo.GetUserAsync(new Guid(id));
+			if (user == null) {
+				return NotFound(new {
+					Message = $"User '{id}' not found.",
+					Status = 404
+				});
+			}
+			return Ok(user.AsDTO());
+		}
+
 		//GET /api/v1/user/{id}
 		[HttpGet("{id}")]
 		public async Task<ActionResult<UserDTO>> GetUserAsync(Guid id) {

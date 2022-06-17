@@ -73,6 +73,10 @@ namespace bugtracker {
             .AllowCredentials();
             return;
 					}
+          policy.WithOrigins("https://deft-lollipop-4b3739.netlify.app")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
         });
       });
 

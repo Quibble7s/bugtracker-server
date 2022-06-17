@@ -18,20 +18,24 @@ using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using bugtracker.Config;
-using bugtracker.Repositories;
 using bugtracker.Lib.Jwt;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
+using bugtracker.Repositories;
 
 namespace bugtracker {
 	public class Startup{
-    public Startup(IConfiguration configuration)
+    public Startup(IConfiguration configuration, IWebHostEnvironment enviroment)
     {
       Configuration = configuration;
+      _enviroment = enviroment;
     }
 
     public IConfiguration Configuration { get; }
+    private IWebHostEnvironment _enviroment;
 
+    //CORS POLICY NAME
+    private readonly string _policyName = "AllowSpecificOrigins";
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
@@ -60,7 +64,17 @@ namespace bugtracker {
       services.AddSingleton<IJwtUtils, JwtUtils>();
 
       //CORS
-      services.AddCors();
+      services.AddCors(options => {
+        options.AddPolicy(_policyName, policy => {
+					if (_enviroment.IsDevelopment()) {
+            policy.WithOrigins("http://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+            return;
+					}
+        });
+      });
 
       //Authentication
       services.AddAuthentication(options => {
@@ -101,18 +115,13 @@ namespace bugtracker {
         app.UseDeveloperExceptionPage();
         app.UseSwagger();
         app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "bugtracker v1"));
+      }
+
+			if (!env.IsDevelopment()) {
         app.UseHttpsRedirection();
       }
 
       app.UseRouting();
-
-      //MORE CORS
-      app.UseCors(builder => {
-        builder.AllowAnyMethod();
-        builder.AllowAnyHeader();
-        builder.SetIsOriginAllowed(origin => true);
-        builder.AllowCredentials();
-      });
 
       //STATIC FILES
       //Disabled in production since heroku doesn't support container volumes
@@ -120,7 +129,10 @@ namespace bugtracker {
         app.UseStaticFiles(new StaticFileOptions() {
           FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "static")),
           RequestPath = "/static"
-        }) ;
+        });
+
+      //MORE CORS
+      app.UseCors(_policyName);
 
       app.UseAuthentication();
       app.UseAuthorization();

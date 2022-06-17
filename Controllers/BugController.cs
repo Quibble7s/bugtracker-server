@@ -75,17 +75,17 @@ namespace bugtracker.Controllers {
 
 			if (user == null)
 				return NotFound(new {
-					Message = $"User '{userId}' not found.",
+					Message = $"User not found.",
 					Status = 404
 				});
 			if (project == null)
 				return NotFound(new {
-					Message = $"Project '{projectId}' not found.",
+					Message = $"Project not found.",
 					Status = 404
 				});
 			if (project.Members.Where((member) => member.Role == ProjectRole.Admin && member.User.Id == new Guid(userId)).Count() < 1)
 				return NotFound(new {
-					Message = $"User '{userId}' is not part of '{projectId}' project or is not an administrator.",
+					Message = $"User is not part of project or is not an administrator.",
 					Status = 404
 				});
 

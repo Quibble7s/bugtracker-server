@@ -26,6 +26,10 @@ namespace bugtracker.Controllers {
 			this.jwtUtils = jwtUtils;
 		}
 
+		private bool UserIsProjectAdmin (string userId, Project project) {
+			return project.Members.Where((member) => member.Role == ProjectRole.Admin && member.User.Id == new Guid(userId)).Count() > 0;
+		}
+
 		private string GetUserId() {
 			var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
 			var userId = jwtUtils.GetUserIdFromToken(token);
@@ -82,7 +86,7 @@ namespace bugtracker.Controllers {
 
 			if (user == null)
 				return NotFound(new {
-					Message = $"User '{userId}' not found.",
+					Message = $"User not found.",
 					Status = 404
 				});
 
@@ -156,17 +160,17 @@ namespace bugtracker.Controllers {
 
 			if (user == null)
 				return NotFound(new {
-					Message = $"User '{userId}' not found.",
+					Message = $"User not found.",
 					Status = 404
 				});
 			if (project == null)
 				return NotFound(new {
-					Message = $"Project '{id}' not found.",
+					Message = $"Project not found.",
 					Status = 404
 				});
 			if (user.Projects.Contains(project.Id))
 				return NotFound(new {
-					Message = $"User '{userId}' is already part of '{id}' project.",
+					Message = $"You're already part of this project.",
 					Status = 404
 				});
 
@@ -183,19 +187,29 @@ namespace bugtracker.Controllers {
 
 			if (user == null)
 				return NotFound(new {
-					Message = $"User '{userId}' not found.",
+					Message = $"User not found.",
 					Status = 404
 				});
 			if (project == null)
 				return NotFound(new {
-					Message = $"Project '{id}' not found.",
+					Message = $"Project not found.",
 					Status = 404
 				});
 			if (!user.Projects.Contains(project.Id))
 				return NotFound(new {
-					Message = $"User '{userId}' is not part of '{id}' project.",
+					Message = $"User is not part of project.",
 					Status = 404
 				});
+
+			//Delete the project and make all the other members leave if user is admin
+			if(UserIsProjectAdmin(userId, project)) {
+				foreach (Member member in project.Members) {
+					User userMember = await userRepo.GetUserAsync(member.User.Id);
+					await projectRepo.LeaveProjectAsync(userMember, project);
+				}
+				await projectRepo.DeleteProjectAsync(project.Id);
+				return NoContent();
+			}
 
 			await projectRepo.LeaveProjectAsync(user, project);
 			return NoContent();
@@ -209,12 +223,12 @@ namespace bugtracker.Controllers {
 
 			if (project == null)
 				return NotFound(new {
-					Message = $"User '{userId}' not found.",
+					Message = $"User not found.",
 					Status = 404
 				});
-			if (project.Members.Where((member) => member.Role == ProjectRole.Admin && member.User.Id == new Guid(userId)).Count() < 1)
+			if (!UserIsProjectAdmin(userId, project))
 				return NotFound(new {
-					Message = $"User '{userId}' is not part of '{id}' project or is not an administrator.",
+					Message = $"User is not part of project or is not an administrator.",
 					Status = 404
 				});
 

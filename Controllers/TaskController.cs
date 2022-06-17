@@ -29,11 +29,17 @@ namespace bugtracker.Controllers {
 			this.jwtUtils = jwtUtils;
 		}
 
+		private bool UserIsProjectAdmin(string userId, Project project) {
+			return project.Members.Where((member) => member.Role == ProjectRole.Admin && member.User.Id == new Guid(userId)).Count() > 0;
+		}
+
 		private string GetUserId() {
 			var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
 			var userId = jwtUtils.GetUserIdFromToken(token);
 			return userId;
 		}
+
+
 
 		//GET /api/v1/task/{id}/project/{projectId}/bug/{bugId}/user/{userId}
 		[HttpGet("{id}/project/{projectId}/bug/{bugId}")]
@@ -44,24 +50,24 @@ namespace bugtracker.Controllers {
 
 			if (user == null)
 				return NotFound(new {
-					Message = $"User '{userId}' not found.",
+					Message = $"User not found.",
 					Status = 404
 				});
 			if (project == null)
 				return NotFound(new {
-					Message = $"Project '{id}' not found.",
+					Message = $"Project not found.",
 					Status = 404
 				});
 			if (!user.Projects.Contains(project.Id))
 				return NotFound(new {
-					Message = $"User '{userId}' is not part of '{id}' project.",
+					Message = $"User is not part of project.",
 					Status = 404
 				});
 
 			Bug bug = await bugRepo.GetBugAsync(project, bugId);
 			if (bug == null)
 				return NotFound(new {
-					Message = $"Bug '{id}' not found.",
+					Message = $"Bug not found.",
 					Status = 404
 				});
 
@@ -77,24 +83,24 @@ namespace bugtracker.Controllers {
 
 			if (user == null)
 				return NotFound(new {
-					Message = $"User '{userId}' not found.",
+					Message = $"User not found.",
 					Status = 404
 				});
 			if (project == null)
 				return NotFound(new {
-					Message = $"Project '{projectId}' not found.",
+					Message = $"Project not found.",
 					Status = 404
 				});
-			if (project.Members.Where((member) => member.Role == ProjectRole.Admin && member.User.Id == new Guid(userId)).Count() < 1)
+			if (!UserIsProjectAdmin(userId, project))
 				return NotFound(new {
-					Message = $"User '{userId}' is not part of '{projectId}' project or is not an administrator.",
+					Message = $"User is not part of project or is not an administrator.",
 					Status = 404
 				});
 
 			Bug bug = await bugRepo.GetBugAsync(project, bugId);
 			if (bug == null)
 				return NotFound(new {
-					Message = $"Bug '{bugId}' not found.",
+					Message = $"Bug not found.",
 					Status = 404
 				});
 
@@ -113,44 +119,82 @@ namespace bugtracker.Controllers {
 		}
 
 		//PUT /api/v1/task/{id}/project/{projectId}/bug/{bugId}/user/{userId}
-		[HttpPut("{id}/project/{projectId}/bug/{bugId}")]
-		public async Task<ActionResult> UpdateTaskAsync(Guid id, Guid projectId, Guid bugId, UpdateTaskDTO updateTask) {
+		[HttpPut("{id}/project/{projectId}/bug/{bugId}/state")]
+		public async Task<ActionResult> UpdateTaskState(Guid id, Guid projectId, Guid bugId, UpdateTaskDTO updateTask) {
 			string userId = GetUserId();
 			User user = await userRepo.GetUserAsync(new Guid(userId));
 			Project project = await projectRepo.GetProjectAsync(projectId);
 
 			if (user == null)
 				return NotFound(new {
-					Message = $"User '{userId}' not found.",
+					Message = $"User not found.",
 					Status = 404
 				});
 			if (project == null)
 				return NotFound(new {
-					Message = $"Project '{projectId}' not found.",
-					Status = 404
-				});
-			if (project.Members.Where((member) => member.Role == ProjectRole.Admin && member.User.Id == new Guid(userId)).Count() < 1)
-				return NotFound(new {
-					Message = $"User '{userId}' is not part of '{projectId}' project or is not an administrator.",
+					Message = $"Project not found.",
 					Status = 404
 				});
 
 			Bug bug = await bugRepo.GetBugAsync(project, bugId);
 			if (bug == null)
 				return NotFound(new {
-					Message = $"Bug '{bugId}' not found.",
+					Message = $"Issue not found.",
+					Status = 404
+				});
+			BugTask task = await taskRepo.GetTaskAsync(bug, id);
+			if (task == null)
+				return NotFound(new {
+					Message = $"Task not found.",
+					Status = 404
+				});
+
+			BugTask updatedTask = task with {
+				State = updateTask.State == task.State || string.IsNullOrEmpty(updateTask.State) ? task.State : updateTask.State
+			};
+
+			await taskRepo.UpdateTaskAsync(project, bug, updatedTask);
+			return NoContent();
+		}
+
+		//PUT /api/v1/task/{id}/project/{projectId}/bug/{bugId}/user/{userId}
+		[HttpPut("{id}/project/{projectId}/bug/{bugId}/description")]
+		public async Task<ActionResult> UpdateTaskDescription(Guid id, Guid projectId, Guid bugId, UpdateTaskDTO updateTask) {
+			string userId = GetUserId();
+			User user = await userRepo.GetUserAsync(new Guid(userId));
+			Project project = await projectRepo.GetProjectAsync(projectId);
+
+			if (user == null)
+				return NotFound(new {
+					Message = $"User not found.",
+					Status = 404
+				});
+			if (project == null)
+				return NotFound(new {
+					Message = $"Project not found.",
+					Status = 404
+				});
+			if (!UserIsProjectAdmin(userId, project))
+				return NotFound(new {
+					Message = $"User is not part of project or is not an administrator.",
+					Status = 404
+				});
+
+			Bug bug = await bugRepo.GetBugAsync(project, bugId);
+			if (bug == null)
+				return NotFound(new {
+					Message = $"Issue not found.",
 					Status = 404
 				});
 			BugTask task = await taskRepo.GetTaskAsync(bug, id); 
 			if (task == null)
 				return NotFound(new {
-					Message = $"Task '{id}' not found.",
+					Message = $"Task not found.",
 					Status = 404
 				});
 
 			BugTask updatedTask = task with {
-				Description = string.IsNullOrEmpty(updateTask.Description) ? task.Description : updateTask.Description,
-				State = updateTask.State == task.State || string.IsNullOrEmpty(updateTask.State) ? task.State : updateTask.State
+				Description = string.IsNullOrEmpty(updateTask.Description) ? task.Description : updateTask.Description
 			};
 
 			await taskRepo.UpdateTaskAsync(project, bug, updatedTask);
@@ -166,30 +210,30 @@ namespace bugtracker.Controllers {
 
 			if (user == null)
 				return NotFound(new {
-					Message = $"User '{userId}' not found.",
+					Message = $"User not found.",
 					Status = 404
 				});
 			if (project == null)
 				return NotFound(new {
-					Message = $"Project '{projectId}' not found.",
+					Message = $"Project not found.",
 					Status = 404
 				});
-			if (project.Members.Where((member) => member.Role == ProjectRole.Admin && member.User.Id == new Guid(userId)).Count() < 1)
+			if (!UserIsProjectAdmin(userId, project))
 				return NotFound(new {
-					Message = $"User '{userId}' is not part of '{projectId}' project or is not an administrator.",
+					Message = $"User is not part of project or is not an administrator.",
 					Status = 404
 				});
 
 			Bug bug = await bugRepo.GetBugAsync(project, bugId);
 			if (bug == null)
 				return NotFound(new {
-					Message = $"Bug '{bugId}' not found.",
+					Message = $"Bug not found.",
 					Status = 404
 				});
 			BugTask task = await taskRepo.GetTaskAsync(bug, id);
 			if (task == null)
 				return NotFound(new {
-					Message = $"Task '{id}' not found.",
+					Message = $"Task not found.",
 					Status = 404
 				});
 

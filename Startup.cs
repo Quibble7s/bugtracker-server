@@ -89,10 +89,12 @@ namespace bugtracker {
         jwt.RequireHttpsMetadata = false;
         jwt.SaveToken = true;
         jwt.TokenValidationParameters = new TokenValidationParameters {
+
           ValidateIssuerSigningKey = true,
           IssuerSigningKey = new SymmetricSecurityKey(key),
+          ClockSkew = TimeSpan.Zero,
           ValidateIssuer = false,
-          ValidateAudience = false
+          ValidateAudience = false,
         };
       });
 

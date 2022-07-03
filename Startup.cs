@@ -73,7 +73,7 @@ namespace bugtracker {
             .AllowCredentials();
             return;
 					}
-          policy.WithOrigins("https://deft-lollipop-4b3739.netlify.app", "https://www.bugtracker.tk", "https://bugtrckr.netlify.app")
+          policy.WithOrigins("https://www.bugtracker.tk/")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();

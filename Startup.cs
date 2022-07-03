@@ -73,7 +73,7 @@ namespace bugtracker {
             .AllowCredentials();
             return;
 					}
-          policy.WithOrigins("https://www.bugtracker.tk/")
+          policy.WithOrigins("https://www.bugtracker.tk")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();

@@ -32,7 +32,7 @@ This app was built using .NET Core 5, and MongoDB. Hosted on Heroku.
     },
     "JwtConfig": {
       "Secret": "[YOUR_32_CHARACTERS_LONG_STRING_HERE]"
-    }
+    },
     "MongoDbSettings": {
       "Env": "mongodb",
       "Host": "localhost",
@@ -43,7 +43,8 @@ This app was built using .NET Core 5, and MongoDB. Hosted on Heroku.
   }
   ```
 
-- Run `dotnet run` to run the app.
+- Update the line `70` in the [Startup.cs file](/Startup.cs) to allow your frontned to comunicate with the API.
+- Run `dotnet run` to run the app. Now you can access all the endpoints at this url: [http://localhost:80](http://localhost:80).
 
 ## Documentation
 

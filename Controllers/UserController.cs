@@ -96,45 +96,6 @@ namespace bugtracker.Controllers {
 			return NoContent();
 		}
 
-		//PUT /api/v1/user/{id}
-		[HttpPut("image")]
-		public async Task<IActionResult> UpdateUserProfilePictureAsync([FromForm][Required] IFormFile data) {
-			//Disabled
-			return BadRequest(new {
-				Message = $"Disabled since heroku doesn't support container volumes.",
-				Status = 400
-			});
-
-			Guid id = new Guid(GetUserId());
-
-			string[] validExtensions = new string[] {"jpg", "png", "svg", "gif"};
-
-			if (!validExtensions.Any(ext => data.FileName.EndsWith(ext))) {
-				return BadRequest(new {
-					Message = $"File extension is invalid.",
-					Status = 400
-				});
-			}
-
-			User user = await userRepo.GetUserAsync(id);
-
-			if (user == null)
-				return NotFound(new {
-					Message = $"User '{id}' not found.",
-					Status = 404
-				});
-
-			bool success = await userRepo.UpdateUserProfilePictureAsync(data, user);
-
-			if (!success)
-				return BadRequest(new {
-					Message = $"An error ocurred while trying to upload '{data.FileName}'",
-					Status = 400
-				});
-
-			return NoContent();
-		}
-
 		//DELETE /api/v1/user/{id}/delete
 		[HttpDelete("delete")]
 		public async Task<ActionResult> DeleteUserAsync() {

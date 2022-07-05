@@ -129,14 +129,6 @@ namespace bugtracker {
 
       app.UseRouting();
 
-      //STATIC FILES
-      //Disabled in production since heroku doesn't support container volumes
-      if(env.IsDevelopment())
-        app.UseStaticFiles(new StaticFileOptions() {
-          FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "static")),
-          RequestPath = "/static"
-        });
-
       //MORE CORS
       app.UseCors(_policyName);
 

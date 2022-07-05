@@ -36,7 +36,7 @@ Authenticates the user.
 
 ```json
 {
-  "message": "Invalid user or password.",
+  "message": "Invalid email or password.",
   "status": 401
 }
 ```

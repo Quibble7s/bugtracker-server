@@ -23,7 +23,7 @@ Updates the current user.
 
 ## Success Response
 
-**Code** : `201 NO CONTENT`
+**Code** : `204 NO CONTENT`
 
 ## Error Response
 

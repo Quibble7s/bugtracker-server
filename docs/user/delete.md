@@ -12,7 +12,7 @@ Deletes and force the current user to leave all the current projects he/she is p
 
 ## Success Response
 
-**Code** : `201 NO CONTENT`
+**Code** : `204 NO CONTENT`
 
 ## Error Response
 

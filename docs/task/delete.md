@@ -22,11 +22,12 @@ Deletes the task.
 
 **Content Example**
 
-````json
+```json
 {
   "message": "Task {:taskID} not found.",
   "status": 404
 }
+```
 
 **Code** : `404 NOT FOUND`
 
@@ -37,7 +38,7 @@ Deletes the task.
   "message": "Bug {:bugID} not found.",
   "status": 404
 }
-````
+```
 
 **Code** : `404 NOT FOUND`
 

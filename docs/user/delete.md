@@ -2,7 +2,7 @@
 
 Deletes and force the current user to leave all the current projects he/she is part of.
 
-**URL** : `/api/v{:version}/user/update`
+**URL** : `/api/v{:version}/user/delete`
 
 **Method** : `DELETE`
 

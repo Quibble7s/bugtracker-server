@@ -16,6 +16,10 @@ namespace bugtracker.Repositories {
 			logCollection = database.GetCollection<Log>(DBNames.DB_PROJECT_LOGS);
 		}
 
+		private int Clamp(int min, int max, int value) {
+			return value < min ? min : value > max ? max : value;
+		}
+
 		public async Task DeleteLogAsync(Guid id) {
 			await logCollection.DeleteOneAsync(logFilter.Eq((log) => log.Id, id));
 		}
@@ -24,25 +28,11 @@ namespace bugtracker.Repositories {
 			return await logCollection.Find(logFilter.Eq((log) => log.Id, id)).SingleOrDefaultAsync();
 		}
 
-		public async Task<IEnumerable<LogMessage>> GetLogMessagesAsync(Guid id, int page = 1, int perPage = 10) {
+		public async Task<IEnumerable<LogMessage>> GetLogMessagesAsync(Guid id) {
 			Log log = await GetLogAsync(id);
 
 			if(log != null) {
-				List<LogMessage> messages = (List<LogMessage>)log.Messages;
-				List<LogMessage> output = new List<LogMessage>();
-
-				//Gettig the start and end index based on the parameters.
-				int end = (page - 1) * perPage;
-				int start = end + perPage - 1;
-
-				for (int i = start; i >= end; i--) {
-					if(i < messages.Count) {
-						LogMessage message = messages[i];
-						output.Add(message);
-					}
-				}
-
-				return output;
+				return log.Messages;
 			}
 			return null;
 		}

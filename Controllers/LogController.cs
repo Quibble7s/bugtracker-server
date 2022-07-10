@@ -32,9 +32,9 @@ namespace bugtracker.Controllers {
 			return Ok(log);
 		}
 
-		[HttpGet("{id}/messages/{page}/{perPage}")]
-		public async Task<ActionResult<IEnumerable<LogMessage>>> GetMessages(Guid id, int page, int perPage) {
-			List<LogMessage> messages = (List<LogMessage>)await logRepo.GetLogMessagesAsync(id, page, perPage);
+		[HttpGet("{id}/messages")]
+		public async Task<ActionResult<IEnumerable<LogMessage>>> GetMessages(Guid id) {
+			List<LogMessage> messages = (List<LogMessage>)await logRepo.GetLogMessagesAsync(id);
 			if(messages == null) {
 				return NotFound(new {
 					Message = "Log not found.",

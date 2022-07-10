@@ -36,8 +36,8 @@ namespace bugtracker.Repositories {
 				int start = end + perPage - 1;
 
 				for (int i = start; i >= end; i--) {
-					LogMessage message = messages[i];
-					if(message != null) {
+					if(i < messages.Count) {
+						LogMessage message = messages[i];
 						output.Add(message);
 					}
 				}

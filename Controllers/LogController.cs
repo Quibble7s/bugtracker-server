@@ -36,10 +36,7 @@ namespace bugtracker.Controllers {
 		public async Task<ActionResult<IEnumerable<LogMessage>>> GetMessages(Guid id) {
 			List<LogMessage> messages = (List<LogMessage>)await logRepo.GetLogMessagesAsync(id);
 			if(messages == null) {
-				return NotFound(new {
-					Message = "Log not found.",
-					Status = 404
-				});
+				return Ok(new { total = 0, messages = new List<LogMessage>() });
 			}
 			messages.Reverse();
 			return Ok(new { total = messages.Count, messages = messages});

@@ -41,6 +41,7 @@ namespace bugtracker.Controllers {
 					Status = 404
 				});
 			}
+			messages.Reverse();
 			return Ok(new { total = messages.Count, messages = messages});
 		}
 	}

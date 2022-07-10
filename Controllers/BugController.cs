@@ -19,12 +19,14 @@ namespace bugtracker.Controllers {
 		private readonly IUserRepo userRepo;
 		private readonly IProjectRepo projectRepo;
 		private readonly IBugRepo bugRepo;
+		private readonly ILogRepo logRepo;
 		private readonly IJwtUtils jwtUtils;
 
-		public BugController(IUserRepo userRepo, IProjectRepo projectRepo, IBugRepo bugRepo, IJwtUtils jwtUtils) {
+		public BugController(IUserRepo userRepo, IProjectRepo projectRepo, IBugRepo bugRepo, ILogRepo logRepo, IJwtUtils jwtUtils) {
 			this.userRepo = userRepo;
 			this.projectRepo = projectRepo;
 			this.bugRepo = bugRepo;
+			this.logRepo = logRepo;
 			this.jwtUtils = jwtUtils;
 		}
 
@@ -100,6 +102,8 @@ namespace bugtracker.Controllers {
 			};
 
 			await bugRepo.CreateBugAsync(project, createdBug);
+			await logRepo.SetLogAsync(project.Id, $"{user.UserName} created \"{createdBug.Name}\" issue.");
+			await logRepo.SetLogAsync(createdBug.Id, $"{user.UserName} created this issue.");
 			return CreatedAtAction(nameof(GetBugAsync), new {
 				id = createdBug.Id,
 				projectId = project.Id
@@ -141,6 +145,7 @@ namespace bugtracker.Controllers {
 				Description = string.IsNullOrEmpty(updateBug.Description) ? bug.Description : updateBug.Description,
 				Priority = updateBug.Priority == bug.Priority || string.IsNullOrEmpty(updateBug.Priority) ? bug.Priority : updateBug.Priority
 			});
+			await logRepo.SetLogAsync(bug.Id, $"{user.UserName} updated this issue.");
 			return NoContent();
 		}
 
@@ -168,6 +173,7 @@ namespace bugtracker.Controllers {
 				});
 
 			await bugRepo.DeleteBugAsync(project, id);
+			await logRepo.DeleteLogAsync(id);
 			return NoContent();
 		}
 	}

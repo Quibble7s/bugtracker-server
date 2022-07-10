@@ -19,13 +19,15 @@ namespace bugtracker.Controllers {
 		private readonly IProjectRepo projectRepo;
 		private readonly IBugRepo bugRepo;
 		private readonly ITaskRepo taskRepo;
+		private readonly ILogRepo logRepo;
 		private readonly IJwtUtils jwtUtils;
 
-		public TaskController(IUserRepo userRepo, IProjectRepo projectRepo, IBugRepo bugRepo, ITaskRepo taskRepo, IJwtUtils jwtUtils) {
+		public TaskController(IUserRepo userRepo, IProjectRepo projectRepo, IBugRepo bugRepo, ITaskRepo taskRepo, ILogRepo logRepo, IJwtUtils jwtUtils) {
 			this.userRepo = userRepo;
 			this.projectRepo = projectRepo;
 			this.bugRepo = bugRepo;
 			this.taskRepo = taskRepo;
+			this.logRepo = logRepo;
 			this.jwtUtils = jwtUtils;
 		}
 
@@ -111,6 +113,7 @@ namespace bugtracker.Controllers {
 			};
 
 			await taskRepo.CreateTaskAsync(project, bug, createdTask);
+			await logRepo.SetLogAsync(bug.Id, $"{user.UserName} created \"{createdTask.Description}\" task.");
 			return CreatedAtAction(nameof(GetTaskAsync), new { 
 				id = createdTask.Id, 
 				projectId = project.Id, 
@@ -154,6 +157,7 @@ namespace bugtracker.Controllers {
 			};
 
 			await taskRepo.UpdateTaskAsync(project, bug, updatedTask);
+			await logRepo.SetLogAsync(bug.Id, $"{user.UserName} updated the state of \"{task.Description}\" to \"{updatedTask.State}\".");
 			return NoContent();
 		}
 
@@ -198,6 +202,7 @@ namespace bugtracker.Controllers {
 			};
 
 			await taskRepo.UpdateTaskAsync(project, bug, updatedTask);
+			await logRepo.SetLogAsync(bug.Id, $"{user.UserName} updated task description from \"{task.Description}\" to \"{updatedTask.Description}\".");
 			return NoContent();
 		}
 
@@ -238,6 +243,7 @@ namespace bugtracker.Controllers {
 				});
 
 			await taskRepo.DeleteTaskAsync(project, bug, id);
+			await logRepo.SetLogAsync(bug.Id, $"{user.UserName} removed \"{task.Description}\" task.");
 			return NoContent();
 		}
 	}

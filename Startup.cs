@@ -59,6 +59,7 @@ namespace bugtracker {
       services.AddSingleton<IProjectRepo, ProjectRepo>();
       services.AddSingleton<IBugRepo, BugRepo>();
       services.AddSingleton<ITaskRepo, TaskRepo>();
+      services.AddSingleton<ILogRepo, LogRepo>();
       services.AddSingleton<IAuthRepo, AuthRepo>();
       //Utils
       services.AddSingleton<IJwtUtils, JwtUtils>();

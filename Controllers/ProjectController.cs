@@ -18,11 +18,13 @@ namespace bugtracker.Controllers {
 
 		private readonly IUserRepo userRepo;
 		private readonly IProjectRepo projectRepo;
+		private readonly ILogRepo logRepo;
 		private readonly IJwtUtils jwtUtils;
 
-		public ProjectController(IUserRepo userRepo, IProjectRepo projectRepo, IJwtUtils jwtUtils) {
+		public ProjectController(IUserRepo userRepo, IProjectRepo projectRepo, ILogRepo logRepo, IJwtUtils jwtUtils) {
 			this.userRepo = userRepo;
 			this.projectRepo = projectRepo;
+			this.logRepo = logRepo;
 			this.jwtUtils = jwtUtils;
 		}
 
@@ -103,6 +105,7 @@ namespace bugtracker.Controllers {
 			};
 
 			await projectRepo.CreateProjectAsync(user, createdProject);
+			await logRepo.SetLogAsync(createdProject.Id, $"{user.UserName} created this project.");
 
 			return CreatedAtAction(nameof(GetProjectAsync), new { 
 				id = createdProject.Id 
@@ -148,6 +151,7 @@ namespace bugtracker.Controllers {
 			};
 
 			await projectRepo.UpdateProjectAsync(updatedProject);
+			await logRepo.SetLogAsync(id, $"{user.UserName} updated the project.");
 			return NoContent();
 		}
 
@@ -175,6 +179,7 @@ namespace bugtracker.Controllers {
 				});
 
 			await projectRepo.JoinProjectAsync(user, project);
+			await logRepo.SetLogAsync(id, $"{user.UserName} joined the project.");
 			return NoContent();
 		}
 
@@ -212,6 +217,7 @@ namespace bugtracker.Controllers {
 			}
 
 			await projectRepo.LeaveProjectAsync(user, project);
+			await logRepo.SetLogAsync(id, $"{user.UserName} left the project.");
 			return NoContent();
 		}
 
@@ -238,6 +244,7 @@ namespace bugtracker.Controllers {
 			}
 
 			await projectRepo.DeleteProjectAsync(project.Id);
+			await logRepo.DeleteLogAsync(project.Id);
 			return NoContent();
 		}
 	}

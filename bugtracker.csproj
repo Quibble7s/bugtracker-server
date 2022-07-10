@@ -54,6 +54,7 @@
 
   <ItemGroup>
     <Folder Include="bin\Release\net5.0\ref\" />
+    <Folder Include="docs\log\" />
     <Folder Include="static\user\d902f1e9-0554-46a8-8617-24bd11beeba5\images\" />
   </ItemGroup>
 

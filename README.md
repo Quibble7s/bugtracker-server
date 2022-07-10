@@ -9,6 +9,7 @@ This app was built using .NET Core 5, and MongoDB. Hosted on Heroku.
 - JWT Authentication
 - Role Based Authorization.
 - Encrypted sensitive data.
+- Project activity logs.
 - CORS.
 - More than 20 endpoints.
 
@@ -54,6 +55,4 @@ You can see all the available documentation [here.](/docs/)
 
 - Real time project updates using SignalIR.
 - In memory rate-limiting.
-- Project log.
-- Issue log.
 - Add more functionality for project admins (removing members, join queue, asign issues to members).

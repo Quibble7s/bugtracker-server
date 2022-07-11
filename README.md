@@ -55,4 +55,4 @@ You can see all the available documentation [here.](/docs/)
 
 - Real time project updates using SignalIR.
 - In memory rate-limiting.
-- Add more functionality for project admins (removing members, join queue, asign issues to members).
+- Add more functionality for project admins (removing members, join queue, assign issues to members).

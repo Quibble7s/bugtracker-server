@@ -22,6 +22,8 @@ using bugtracker.Lib.Jwt;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
 using bugtracker.Repositories;
+using AspNetCoreRateLimit;
+using System.Collections.Generic;
 
 namespace bugtracker {
 	public class Startup{
@@ -63,6 +65,12 @@ namespace bugtracker {
       services.AddSingleton<IAuthRepo, AuthRepo>();
       //Utils
       services.AddSingleton<IJwtUtils, JwtUtils>();
+      //Rate Limiting Dependencies
+      services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
+      services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+      services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+      services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
+
 
       //CORS
       services.AddCors(options => {
@@ -98,6 +106,32 @@ namespace bugtracker {
           ValidateAudience = false,
         };
       });
+
+      //Rate Limiting
+      services.AddMemoryCache();
+      services.Configure<IpRateLimitOptions>(options =>
+      {
+        options.EnableEndpointRateLimiting = true;
+        options.StackBlockedRequests = false;
+        options.HttpStatusCode = 429;
+        options.RealIpHeader = "X-Real-IP";
+        options.ClientIdHeader = "X-ClientId";
+        options.GeneralRules = new List<RateLimitRule>
+            {
+            new RateLimitRule
+            {
+                Endpoint = "*",
+                Period = "30m",
+                Limit = 5000,
+            }
+        };
+        options.QuotaExceededResponse = new QuotaExceededResponse() {
+          Content = "{{ \"title\": \"You exceeded the amout of requests.\", \"details\": \"Quota exceeded. Maximum allowed: {0} per {1}. Please try again in {2} second(s).\" }}",
+          ContentType = "application/json",
+          StatusCode = 429
+        };
+      });
+      services.AddInMemoryRateLimiting();
 
       services.AddControllers(options => {
         options.SuppressAsyncSuffixInActionNames = false;
@@ -135,6 +169,9 @@ namespace bugtracker {
 
       app.UseAuthentication();
       app.UseAuthorization();
+
+      //Rate Limiting
+      app.UseIpRateLimiting();
 
       app.UseEndpoints(endpoints =>
       {

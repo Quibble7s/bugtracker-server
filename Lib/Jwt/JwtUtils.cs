@@ -19,7 +19,7 @@ namespace bugtracker.Lib.Jwt {
 
 		public string GenerateToken(User user) {
 			var tokenHandler = new JwtSecurityTokenHandler();
-			var tokenKey = Encoding.ASCII.GetBytes(configuration.GetSection(nameof(JwtConfig)).Get<JwtConfig>().Secret);
+			var tokenKey = Encoding.ASCII.GetBytes(configuration.GetValue<string>("Secret"));
 
 			var tokenDescriptor = new SecurityTokenDescriptor() {
 				Subject = new ClaimsIdentity(new Claim[] {
@@ -40,8 +40,8 @@ namespace bugtracker.Lib.Jwt {
         return null;
 
       var tokenHandler = new JwtSecurityTokenHandler();
-      var key = Encoding.ASCII.GetBytes(configuration.GetSection(nameof(JwtConfig)).Get<JwtConfig>().Secret);
-      try {
+      var key = Encoding.ASCII.GetBytes(configuration.GetValue<string>("Secret"));
+            try {
         tokenHandler.ValidateToken(token, new TokenValidationParameters {
           ValidateIssuerSigningKey = true,
           IssuerSigningKey = new SymmetricSecurityKey(key),

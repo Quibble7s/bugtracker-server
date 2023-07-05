@@ -51,14 +51,14 @@ namespace bugtracker {
             var Host = Configuration.GetValue<string>("Host");
             var Password = Configuration.GetValue<string>("Password");
             var Port = Configuration.GetValue<string>("Port");
-            var User = Configuration.GetValue<string>("User");
+            var Username = Configuration.GetValue<string>("MongoUser");
 
             var mongoDbSettings = new MongoDbSettings {
                 Env = Env,
                 Host = Host,
                 Password = Password,
                 Port = Port,
-                User = User,
+                User = Username,
             };
             var jwtConfig = new JwtConfig { Secret = secret };
 

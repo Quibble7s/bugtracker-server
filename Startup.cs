@@ -50,7 +50,7 @@ namespace bugtracker {
             var Env = Configuration.GetValue<string>("Env");
             var Host = Configuration.GetValue<string>("Host");
             var Password = Configuration.GetValue<string>("Password");
-            var Port = Configuration.GetValue<string>("Port");
+            var Port = Configuration.GetValue<string>("MongoPort");
             var Username = Configuration.GetValue<string>("MongoUser");
 
             var mongoDbSettings = new MongoDbSettings {

@@ -60,6 +60,9 @@ namespace bugtracker {
                 Port = Port,
                 User = Username,
             };
+
+            Console.WriteLine(mongoDbSettings.ConnectionString);
+
             var jwtConfig = new JwtConfig { Secret = secret };
 
             //Adding a new instance of the MongoClient with the connection string.

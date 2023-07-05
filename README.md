@@ -32,16 +32,12 @@ This app was built using .NET Core 5, and MongoDB. Hosted on Heroku.
         "Microsoft.Hosting.Lifetime": "Information"
       }
     },
-    "JwtConfig": {
-      "Secret": "[YOUR_32_CHARACTERS_LONG_STRING_HERE]"
-    },
-    "MongoDbSettings": {
-      "Env": "mongodb",
-      "Host": "localhost",
-      "Username": "[YOUR_USERNAME_HERE]",
-      "Password": "[YOUR_PASSWORD_HERE]",
-      "Port": ":27017"
-    }
+    "Secret": "[YOUR_32_CHARACTERS_LONG_STRING_HERE]",
+    "Env": "mongodb",
+    "Host": "localhost",
+    "Username": "[YOUR_USERNAME_HERE]",
+    "Password": "[YOUR_PASSWORD_HERE]",
+    "Port": ":27017"
   }
   ```
 

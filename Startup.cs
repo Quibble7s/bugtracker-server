@@ -101,7 +101,7 @@ namespace bugtracker {
                 policy.WithOrigins("https://www.bugtracker.tk", "https://main--bugtrckr.netlify.app")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
-                .AllowCredentials();
+                .AllowCredentials(); 
             });
             });
 
